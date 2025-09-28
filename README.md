@@ -1,40 +1,76 @@
-<p align="center">
-<img src="./rustplusplus.png" width="500"></a>
-</p>
+# Rustplusplus Credential Application (Spring Boot)
 
-<p align="center">
-<a href="https://discord.gg/vcrKbKVAbc"><img src="https://img.shields.io/badge/Discord-Alexemanuel-%237289DA?style=flat&logo=discord" alt="discord"/></a>
-<a href="https://www.reddit.com/user/Alexemanuelol"><img src="https://img.shields.io/badge/Reddit-Alexemanuelol-FF4500?style=flat&logo=reddit" alt="reddit"/></a>
-<a href="https://ko-fi.com/alexemanuelol"><img src="https://img.shields.io/badge/Donate%20a%20Coffee-alexemanuelol-yellow?style=flat&logo=buy-me-a-coffee" alt="donate on ko-fi"/></a>
+This project rewrites the original Electron/Vue credential application as a Java Spring Boot REST API. It manages credential access requests for the [rustplusplus](https://github.com/alexemanuelol/rustplusplus) Discord bot by providing endpoints to submit, review, and delete requests.
 
-<p align="center">
-    <a href="https://discord.gg/vcrKbKVAbc">
-        <img src="./join_discord.png" width="250">
-    </a>
-</p>
+## Features
 
-<h1 align="center"><em><b>rustplusplus credentials application</b></em></h1>
-</p>
+- Submit new credential requests with validation for email, Discord tag, Steam ID, and justification.
+- Filter existing requests by their current status (pending, approved, rejected).
+- Update request status or remove requests entirely.
+- Centralized exception handling with helpful error responses.
+- In-memory storage for easy local development (swap for a persistent store as needed).
 
-Application to access credentials used for the NodeJS Discord Bot [rustplusplus](https://github.com/alexemanuelol/rustplusplus).
+## Getting Started
 
+### Prerequisites
 
-## **How-to build for development**
+- Java 17+
+- Maven 3.9+
 
-Download and Install Dependencies
+### Run the Application
 
-    $ npm install
+```bash
+mvn spring-boot:run
+```
 
-Setup Firebase configuration by creating a .env file and include the following with values
+The API will be available at `http://localhost:8080`.
 
-    FIREBASE_API_KEY=
-    FIREBASE_APP_ID=
-    FIREBASE_PROJECT_ID=
+### Run Tests
 
-Run Electron app for Development
+```bash
+mvn test
+```
 
-    $ npm run electron:serve
+## API Overview
 
-## **Build for Mac, Windows and Linux**
+| Method | Endpoint                  | Description                                   |
+|--------|---------------------------|-----------------------------------------------|
+| POST   | `/api/credentials`        | Create a new credential request.              |
+| GET    | `/api/credentials`        | List requests, optionally filtered by status. |
+| PUT    | `/api/credentials/{id}/status` | Update the status of a specific request.  |
+| DELETE | `/api/credentials/{id}`   | Delete a credential request.                  |
 
-    $ npm run electron:build -- --mac --win --linux
+### Sample Request Payloads
+
+**Create request**
+
+```http
+POST /api/credentials
+Content-Type: application/json
+
+{
+  "email": "player@example.com",
+  "discordTag": "Player#1234",
+  "steamId": "76561198000000000",
+  "justification": "I maintain the production bot"
+}
+```
+
+**Update status**
+
+```http
+PUT /api/credentials/1/status
+Content-Type: application/json
+
+{
+  "status": "APPROVED"
+}
+```
+
+Validation errors and missing resources return structured JSON responses describing the issue.
+
+## Next Steps
+
+- Replace the in-memory storage with a persistent data store.
+- Add authentication/authorization for administrative actions.
+- Build a UI (web or desktop) that consumes the REST API.
