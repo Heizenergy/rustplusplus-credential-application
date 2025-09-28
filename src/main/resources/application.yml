@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: rustplusplus-credentials
+server:
+  port: 8080
